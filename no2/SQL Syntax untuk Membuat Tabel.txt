@@ -1,0 +1,103 @@
+-- 1. Tabel Users (Customers)
+CREATE TABLE public.users (
+    user_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(255),
+    password VARCHAR(255) NOT NULL
+);
+
+-- 2. Tabel Transportation (Airlines, Trains, etc.)
+CREATE TABLE public.transportation (
+    transportation_id SERIAL PRIMARY KEY,
+    transportation_type VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    departure_city VARCHAR(100) NOT NULL,
+    arrival_city VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    departure_date DATE NOT NULL,
+    arrival_date DATE NOT NULL
+);
+
+-- 3. Tabel Hotel
+CREATE TABLE public.hotel (
+    hotel_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    price_per_night DECIMAL(10, 2) NOT NULL,
+    rating DECIMAL(3, 2),
+    address VARCHAR(255),
+    facilities TEXT
+);
+
+-- 4. Tabel Tourist Attractions
+CREATE TABLE public.tourist_attractions (
+    attraction_id SERIAL PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    address VARCHAR(255),
+    opening_hours VARCHAR(100)
+);
+
+-- 5. Tabel Tickets for Tourist Attractions
+CREATE TABLE public.tickets (
+    ticket_id SERIAL PRIMARY KEY,
+    attraction_id INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    available_quantity INT NOT NULL,
+    CONSTRAINT fk_ticket_attraction FOREIGN KEY (attraction_id) REFERENCES public.tourist_attractions(attraction_id)
+);
+
+-- 6. Tabel Tour Packages Offered by Travel Agents
+CREATE TABLE public.tour_packages (
+    package_id SERIAL PRIMARY KEY,
+    package_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    available_quantity INT NOT NULL,
+    city VARCHAR(100) NOT NULL
+);
+
+-- 7. Tabel Orders (Bookings of Tickets, Hotels, Transportation, etc.)
+CREATE TABLE public.orders (
+    order_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) NOT NULL,  
+    CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+);
+
+-- 8. Tabel OrderDetails (Details of each item in an order - could be transportation, hotel, tickets, or tour packages)
+CREATE TABLE public.order_details (
+    order_detail_id SERIAL PRIMARY KEY,
+    order_id INT NOT NULL,
+    item_type VARCHAR(50) NOT NULL,  
+    item_id INT NOT NULL,  
+    quantity INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT fk_order_detail_order FOREIGN KEY (order_id) REFERENCES public.orders(order_id)
+);
+
+-- Menambahkan Foreign Key pada OrderDetails untuk item_id yang mengarah ke berbagai tabel
+ALTER TABLE public.order_details 
+    ADD CONSTRAINT fk_order_detail_transportation FOREIGN KEY (item_id) REFERENCES public.transportation(transportation_id);
+
+ALTER TABLE public.order_details 
+    ADD CONSTRAINT fk_order_detail_hotel FOREIGN KEY (item_id) REFERENCES public.hotel(hotel_id);
+
+ALTER TABLE public.order_details 
+    ADD CONSTRAINT fk_order_detail_ticket FOREIGN KEY (item_id) REFERENCES public.tickets(ticket_id);
+
+ALTER TABLE public.order_details 
+    ADD CONSTRAINT fk_order_detail_tour_package FOREIGN KEY (item_id) REFERENCES public.tour_packages(package_id);
+
+-- Menambahkan Foreign Key pada tabel tickets yang mengarah ke tabel tourist_attractions
+ALTER TABLE public.tickets 
+    ADD CONSTRAINT fk_ticket_attraction FOREIGN KEY (attraction_id) REFERENCES public.tourist_attractions(attraction_id);
+
+-- Menambahkan Foreign Key pada tabel orders yang mengarah ke tabel users
+ALTER TABLE public.orders 
+    ADD CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES public.users(user_id);

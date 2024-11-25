@@ -1,0 +1,77 @@
+-- 1. Membuat tabel person terlebih dahulu
+CREATE TABLE public.person (
+    personid int4 NOT NULL,
+    "name" varchar(100) NOT NULL,
+    roleperson varchar(50) NULL,
+    address varchar(255) NULL,
+    phone varchar(20) NULL,
+    photouser bytea NULL,
+    CONSTRAINT person_pkey PRIMARY KEY (personid)
+);
+
+-- 2. Membuat tabel usergudang setelah tabel person
+CREATE TABLE public.usergudang (
+    userid int4 NOT NULL,
+    personid int4 NULL,
+    username varchar(50) NOT NULL,
+    "password" varchar(255) NOT NULL,
+    CONSTRAINT usergudang_pkey PRIMARY KEY (userid),
+    CONSTRAINT usergudang_username_key UNIQUE (username)
+);
+
+-- Menambahkan foreign key pada tabel usergudang yang mengarah ke tabel person
+ALTER TABLE public.usergudang ADD CONSTRAINT usergudang_personid_fkey FOREIGN KEY (personid) REFERENCES public.person(personid);
+
+-- 3. Membuat tabel databarang setelah tabel usergudang
+CREATE TABLE public.databarang (
+    barangid serial4 NOT NULL,
+    userid int4 NULL,
+    namabarang varchar(100) NOT NULL,
+    stock int4 DEFAULT 0 NULL,
+    warna varchar(30) NULL,
+    ukuran varchar(10) NULL,
+    gambarbarang bytea NULL,
+    lokasigudang varchar(255) NULL,
+    CONSTRAINT databarang_pkey PRIMARY KEY (barangid)
+);
+
+-- Menambahkan foreign key pada tabel databarang yang mengarah ke tabel usergudang
+ALTER TABLE public.databarang ADD CONSTRAINT databarang_userid_fkey FOREIGN KEY (userid) REFERENCES public.usergudang(userid);
+
+-- 4. Membuat tabel barangmasuk setelah tabel databarang
+CREATE TABLE public.barangmasuk (
+    masukid serial4 NOT NULL,
+    barangid int4 NULL,
+    jumlah int4 NOT NULL,
+    tanggalmasuk date NULL,
+    CONSTRAINT barangmasuk_pkey PRIMARY KEY (masukid)
+);
+
+-- Menambahkan foreign key pada tabel barangmasuk yang mengarah ke tabel databarang
+ALTER TABLE public.barangmasuk ADD CONSTRAINT barangmasuk_barangid_fkey FOREIGN KEY (barangid) REFERENCES public.databarang(barangid);
+
+-- 5. Membuat tabel barangkeluar setelah tabel databarang
+CREATE TABLE public.barangkeluar (
+    keluarid int4 NOT NULL,
+    barangid int4 NULL,
+    jumlah int4 NOT NULL,
+    tanggalkeluar date NULL,
+    CONSTRAINT barangkeluar_pkey PRIMARY KEY (keluarid)
+);
+
+-- Menambahkan foreign key pada tabel barangkeluar yang mengarah ke tabel databarang
+ALTER TABLE public.barangkeluar ADD CONSTRAINT barangkeluar_barangid_fkey FOREIGN KEY (barangid) REFERENCES public.databarang(barangid);
+
+-- 6. Membuat tabel riwayat setelah tabel person dan databarang
+CREATE TABLE public.riwayat (
+    riwayatid bigserial NOT NULL,
+    userid int4 NULL,
+    barangid int4 NULL,
+    keterangan text NULL,
+    tanggal date NULL,
+    CONSTRAINT riwayat_pkey PRIMARY KEY (riwayatid)
+);
+
+-- Menambahkan foreign key pada tabel riwayat yang mengarah ke tabel person dan databarang
+ALTER TABLE public.riwayat ADD CONSTRAINT fk_riwayat_barang FOREIGN KEY (barangid) REFERENCES public.databarang(barangid) ON DELETE CASCADE;
+ALTER TABLE public.riwayat ADD CONSTRAINT fk_riwayat_user FOREIGN KEY (userid) REFERENCES public.person(personid) ON DELETE SET NULL;

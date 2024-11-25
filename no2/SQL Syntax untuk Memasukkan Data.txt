@@ -1,0 +1,49 @@
+-- 1. Insert data into Users
+INSERT INTO public.users (full_name, email, phone, address, password)
+VALUES
+    ('John Doe', 'john.doe@email.com', '08123456789', 'Jl. Example No. 1, Jakarta', 'password123'),
+    ('Jane Smith', 'jane.smith@email.com', '08123456780', 'Jl. Example No. 2, Bali', 'password123');
+
+-- 2. Insert data into Transportation (e.g., airlines, trains)
+INSERT INTO public.transportation (transportation_type, name, departure_city, arrival_city, price, departure_date, arrival_date)
+VALUES
+    ('Airline', 'Garuda Indonesia', 'Jakarta', 'Bali', 5000000.00, '2024-12-01', '2024-12-01'),
+    ('Train', 'Kereta Api Indonesia', 'Jakarta', 'Yogyakarta', 200000.00, '2024-12-02', '2024-12-02');
+
+-- 3. Insert data into Hotel
+INSERT INTO public.hotel (name, city, price_per_night, rating, address, facilities)
+VALUES
+    ('Hotel Jakarta', 'Jakarta', 1000000.00, 4.5, 'Jl. Hotel No. 1', 'Free Wi-Fi, Pool, Restaurant'),
+    ('Hotel Bali', 'Bali', 1200000.00, 4.7, 'Jl. Beachfront No. 2', 'Beach Access, Spa, Gym');
+
+-- 4. Insert data into Tourist Attractions
+INSERT INTO public.tourist_attractions (city, name, description, address, opening_hours)
+VALUES
+    ('Bali', 'Sacred Monkey Forest', 'A beautiful forest with hundreds of monkeys', 'Jl. Ubud, Bali', '08:00 - 18:00'),
+    ('Yogyakarta', 'Borobudur Temple', 'The world’s largest Buddhist temple', 'Magelang, Yogyakarta', '06:00 - 17:00');
+
+-- 5. Insert data into Tickets for Tourist Attractions
+INSERT INTO public.tickets (attraction_id, price, available_quantity)
+VALUES
+    (1, 150000.00, 100),
+    (2, 300000.00, 50);
+
+-- 6. Insert data into Tour Packages
+INSERT INTO public.tour_packages (package_name, description, price, available_quantity, city)
+VALUES
+    ('Bali Beach Tour', '5-day package including beach access, meals, and guide', 5000000.00, 20, 'Bali'),
+    ('Yogyakarta Cultural Tour', '3-day package including temple visits and local meals', 3000000.00, 30, 'Yogyakarta');
+
+-- 7. Insert data into Orders
+INSERT INTO public.orders (user_id, total_amount, status)
+VALUES
+    (1, 15000000.00, 'paid'),
+    (2, 8500000.00, 'pending');
+
+-- 8. Insert data into OrderDetails
+INSERT INTO public.order_details (order_id, item_type, item_id, quantity, total_price)
+VALUES
+    (1, 'transportation', 1, 1, 5000000.00),
+    (1, 'hotel', 1, 2, 2000000.00),
+    (2, 'tour_package', 1, 1, 5000000.00),
+    (2, 'ticket', 2, 2, 600000.00);
